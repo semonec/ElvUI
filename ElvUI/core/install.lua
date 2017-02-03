@@ -31,7 +31,7 @@ local GUILD_EVENT_LOG = GUILD_EVENT_LOG;
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS;
 local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS;
 
-local CURRENT_PAGE = 0;
+local CURRENT_PAGE = 5;
 local MAX_PAGE = 8;
 
 local function SetupChat()
@@ -582,6 +582,28 @@ function E:SetupLayout(layout, noDataReset)
 		E.db.movers.ElvUF_PetMover = "BOTTOM,ElvUIParent,BOTTOM,0,115"
 	end
 
+	if(layout =='4Bar') then
+		E.db.movers.ElvUF_PlayerMover = "BOTTOM,ElvUIParent,BOTTOM,-278,220"
+		E.db.movers.ElvUF_TargetMover = "BOTTOM,ElvUIParent,BOTTOM,278,220"
+		E.db.movers.ElvUF_TargetTargetMover = "BOTTOM,ElvUIParent,BOTTOM,0,220"
+		E.db.movers.ElvUF_PetMover = "BOTTOM,ElvUIParent,BOTTOM,0,260"
+		E.db.movers.ElvAB_5 = "BOTTOM,ElvUIParent,BOTTOM,0,106"
+		E.db.movers.ShiftAB = "BOTTOM,ElvUIParent,BOTTOM,0,140"
+		E.db.movers.MicroBar = "TOPLEFT,ElvUIParent,TOPLEFT,4,-4"
+
+		E.db.actionbar.bar3.buttons = 12
+		E.db.actionbar.bar3.buttonsPerRow = 6
+		E.db.actionbar.bar5.buttons = 12
+		E.db.actionbar.bar5.buttonsPerRow = 12
+		E.db.actionbar.bar5.buttons = 12
+		E.db.actionbar.bar2.enabled = true
+		E.db.actionbar.bar4.enabled = true
+		E.db.actionbar.bar6.enabled = true
+
+		E.db.actionbar.microbar.enabled = true
+		E.db.actionbar.microbar.buttonsPerRow = 10
+
+	end
 	if not noDataReset then
 		E:CopyTable(E.db.datatexts.panels, P.datatexts.panels)
 		if layout == "tank" then
@@ -689,6 +711,9 @@ local function ResetAll()
 	InstallOption4Button:Hide()
 	InstallOption4Button:SetScript("OnClick", nil)
 	InstallOption4Button:SetText("")
+	InstallOption5Button:Hide()
+	InstallOption5Button:SetScript("OnClick", nil)
+	InstallOption5Button:SetText("")
 	ElvUIInstallFrame.SubTitle:SetText("")
 	ElvUIInstallFrame.Desc1:SetText("")
 	ElvUIInstallFrame.Desc2:SetText("")
@@ -794,6 +819,9 @@ local function SetPage(PageNum)
 		InstallOption4Button:Show()
 		InstallOption4Button:SetScript("OnClick", function() E.db.layoutSet = nil; E:SetupLayout("dpsCaster") end)
 		InstallOption4Button:SetText(L["Caster DPS"])
+		InstallOption5Button:Show()
+		InstallOption5Button:SetScript("OnClick", function() E.db.layoutSet = nil; E:SetupLayout("4Bar") end)
+		InstallOption5Button:SetText(L["4Bar"])
 	elseif PageNum == 7 then
 		f.SubTitle:SetText(L["Auras"])
 		f.Desc1:SetText(L["Select the type of aura system you want to use with ElvUI's unitframes. Set to Aura Bar & Icons to use both aura bars and icons, set to icons only to only see icons."])
@@ -930,31 +958,49 @@ function E:Install()
 
 		f.Option3 = CreateFrame("Button", "InstallOption3Button", f, "UIPanelButtonTemplate")
 		f.Option3:StripTextures()
-		f.Option3:Size(100, 30)
+		f.Option3:Size(80, 30)
 		f.Option3:Point("LEFT", f.Option2, "RIGHT", 4, 0)
 		f.Option3:SetText("")
 		f.Option3:Hide()
-		f.Option3:SetScript("OnShow", function() f.Option1:SetWidth(100); f.Option1:ClearAllPoints(); f.Option1:Point("RIGHT", f.Option2, "LEFT", -4, 0); f.Option2:SetWidth(100); f.Option2:ClearAllPoints(); f.Option2:Point("BOTTOM", f, "BOTTOM", 0, 45); end);
+		f.Option3:SetScript("OnShow", function() f.Option1:SetWidth(80); f.Option1:ClearAllPoints(); f.Option1:Point("RIGHT", f.Option2, "LEFT", -4, 0); f.Option2:SetWidth(80); f.Option2:ClearAllPoints(); f.Option2:Point("BOTTOM", f, "BOTTOM", 0, 45); end);
 		f.Option3:SetScript("OnHide", function() f.Option1:SetWidth(160); f.Option1:ClearAllPoints(); f.Option1:Point("BOTTOM", 0, 45); f.Option2:SetWidth(110); f.Option2:ClearAllPoints(); f.Option2:Point("BOTTOMLEFT", f, "BOTTOM", 4, 45) end)
 		E.Skins:HandleButton(f.Option3, true)
 
 		f.Option4 = CreateFrame("Button", "InstallOption4Button", f, "UIPanelButtonTemplate")
 		f.Option4:StripTextures()
-		f.Option4:Size(100, 30)
+		f.Option4:Size(80, 30)
 		f.Option4:Point("LEFT", f.Option3, "RIGHT", 4, 0)
 		f.Option4:SetText("")
 		f.Option4:Hide()
 		f.Option4:SetScript("OnShow", function()
-			f.Option1:Width(100)
-			f.Option2:Width(100)
+			f.Option1:Width(80)
+			f.Option2:Width(80)
 
 			f.Option1:ClearAllPoints();
 			f.Option1:Point("RIGHT", f.Option2, "LEFT", -4, 0);
 			f.Option2:ClearAllPoints();
-			f.Option2:Point("BOTTOMRIGHT", f, "BOTTOM", -4, 45);
+			f.Option2:Point("BOTTOMRIGHT", f, "BOTTOM", -44, 45);
 		end)
 		f.Option4:SetScript("OnHide", function() f.Option1:SetWidth(160); f.Option1:ClearAllPoints(); f.Option1:Point("BOTTOM", 0, 45); f.Option2:SetWidth(110); f.Option2:ClearAllPoints(); f.Option2:Point("BOTTOMLEFT", f, "BOTTOM", 4, 45) end)
 		E.Skins:HandleButton(f.Option4, true)
+		-- Edited by Semoon Park.
+		f.Option5 = CreateFrame("Button", "InstallOption5Button", f, "UIPanelButtonTemplate")
+		f.Option5:StripTextures()
+		f.Option5:Size(80, 30)
+		f.Option5:Point("LEFT", f.Option4, "RIGHT", 4, 0)
+		f.Option5:SetText("")
+		f.Option5:Hide()
+		f.Option5:SetScript("OnShow", function()
+			f.Option1:Width(80)
+			f.Option2:Width(80)
+
+			f.Option1:ClearAllPoints();
+			f.Option1:Point("RIGHT", f.Option2, "LEFT", -4, 0);
+			f.Option2:ClearAllPoints();
+			f.Option2:Point("BOTTOMRIGHT", f, "BOTTOM", -44, 45);
+		end)
+		f.Option5:SetScript("OnHide", function() f.Option1:SetWidth(160); f.Option1:ClearAllPoints(); f.Option1:Point("BOTTOM", 0, 45); f.Option2:SetWidth(110); f.Option2:ClearAllPoints(); f.Option2:Point("BOTTOMLEFT", f, "BOTTOM", 4, 45) end)
+		E.Skins:HandleButton(f.Option5, true)
 
 		f.SubTitle = f:CreateFontString(nil, "OVERLAY")
 		f.SubTitle:FontTemplate(nil, 15, nil)
